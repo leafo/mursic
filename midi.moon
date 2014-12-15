@@ -10,8 +10,6 @@ enum = (tbl) ->
 -- hi; 84
 class NoteEvent
   middle_c: 60
-  base_octave: 4
-
   octave_size: 12
 
   offsets: enum {
@@ -24,6 +22,16 @@ class NoteEvent
     B: 11
   }
 
+  @parse_note: (str) =>
+    letter, sharp, flat, octave = str\match "(%w)(#?)(b?)(%d+)"
+    sharp = sharp != ""
+    flat = flat != ""
+    error "note can not be sharp and flat at same time" if sharp and flat
+    i = assert(@offsets[letter], "invalid note letter") + tonumber(octave) * @octave_size
+    i += 1 if sharp
+    i -= 1 if flat
+    i
+
   new: (event_data) =>
     -- { channel, pitch, velocity, unused, duration }
     @channel = event_data[1]
@@ -32,6 +40,7 @@ class NoteEvent
     @duration = event_data[5]
 
   note_name: =>
+    print "pitch", @pitch
     octave = math.floor @pitch / @octave_size
     offset = @pitch - octave * @octave_size
 
@@ -91,4 +100,4 @@ class MidiController
     @create_debug_table!
     unpack @symbols_by_value[event_id]
 
-{ :MidiController }
+{ :MidiController, :NoteEvent }
