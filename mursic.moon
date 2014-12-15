@@ -90,10 +90,11 @@ class Mursic
 
     @seqs\add Sequence ->
       DISPATCHER\push ChooseClientDialog @
+      @staff = Staff "B5"
 
       ui = VList {
         Label "the staff"
-        Staff!
+        @staff
       }
 
       @ui = Bin 0, 0, DISPATCHER.viewport.w, DISPATCHER.viewport.h, ui, 0.5, 0.5
@@ -110,7 +111,8 @@ class Mursic
       event = @midi\next_event!
       break unless event
       if event.name == "noteon"
-        print "on", event\note_name!
+        note = event\note_name!
+        @staff.notes\append note, 1
 
   draw: =>
     @ui\draw!
