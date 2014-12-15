@@ -2,6 +2,7 @@
 {graphics: g} = love
 
 import VList, HList, Bin, Label from require "lovekit.ui"
+import Staff from require "staff"
 
 class StackedView
   new: (@parent) =>
@@ -89,6 +90,14 @@ class Mursic
 
     @seqs\add Sequence ->
       DISPATCHER\push ChooseClientDialog @
+
+      ui = VList {
+        Label "the staff"
+        Staff!
+      }
+
+      @ui = Bin 0, 0, DISPATCHER.viewport.w, DISPATCHER.viewport.h, ui, 0.5, 0.5
+
       wait 0.1
 
   on_show: =>
@@ -96,6 +105,7 @@ class Mursic
 
   update: (dt) =>
     @seqs\update dt
+    @ui\update dt
     while true
       event = @midi\next_event!
       break unless event
@@ -103,6 +113,6 @@ class Mursic
         print "on", event\note_name!
 
   draw: =>
-    g.print "hello world", 10, 10
+    @ui\draw!
 
 { :Mursic }
