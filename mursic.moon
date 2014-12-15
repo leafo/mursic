@@ -58,9 +58,18 @@ class ChooseClientDialog extends StackedView
 
   refresh_list: =>
     @clients = [{id, name} for id, name in pairs @parent.midi\list_clients!]
-    ui = VList for tuple in *@clients
-      Button "#{tuple[2]\lower!} !#{tuple[1]}!", (btn) ->
-        print "chose", unpack tuple
+    buttons = VList for tuple in *@clients
+      Button "#{tuple[2]\lower!}     #{tuple[1]}", (btn) ->
+        @parent.midi\connect_from unpack tuple
+        DISPATCHER\pop!
+
+    ui = VList {
+      Label "choose a client to read from"
+      Box 0,0,150, 2
+      buttons
+      Box 0,0,150, 2
+      Button "skip", => DISPATCHER\pop!
+    }
 
     @ui = Bin 0, 0, DISPATCHER.viewport.w, DISPATCHER.viewport.h, ui, 0.5, 0.5
 
@@ -82,8 +91,15 @@ class Mursic
       DISPATCHER\push ChooseClientDialog @
       wait 0.1
 
+  on_show: =>
+    @midi\flush_events!
+
   update: (dt) =>
     @seqs\update dt
+    while true
+      event = @midi\next_event!
+      break unless event
+      require("moon").p event
 
   draw: =>
     g.print "hello world", 10, 10
