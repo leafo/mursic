@@ -15,9 +15,8 @@ class StackedView
 class Button extends Label
   padding: 5
 
-  new: (...) =>
-    super ...
-    callback = select select("#", ...), ...
+  new: (label, callback) =>
+    super label
     if type(callback) == "function"
       @callback = callback
 
@@ -69,7 +68,7 @@ class ChooseClientDialog extends StackedView
       Box 0,0,150, 2
       buttons
       Box 0,0,150, 2
-      Button "skip", => DISPATCHER\pop!
+      Button "cancel", => DISPATCHER\pop!
     }
 
     @ui = Bin 0, 0, DISPATCHER.viewport.w, DISPATCHER.viewport.h, ui, 0.5, 0.5
@@ -89,7 +88,6 @@ class Mursic
     @midi = MidiController!
 
     @seqs\add Sequence ->
-      DISPATCHER\push ChooseClientDialog @
       @staff = Staff "B5"
 
       ui = VList {
@@ -97,7 +95,19 @@ class Mursic
         @staff
       }
 
-      @ui = Bin 0, 0, DISPATCHER.viewport.w, DISPATCHER.viewport.h, ui, 0.5, 0.5
+      footer = HList {
+        Button "midi in", ->
+          DISPATCHER\push ChooseClientDialog @
+
+        Button "midi out", ->
+          error "not yet"
+      }
+
+      in_viewport = (...) ->
+        5, 5, DISPATCHER.viewport.w - 10, DISPATCHER.viewport.h - 10, ...
+
+      @ui = Bin in_viewport ui, 0.5, 0.5
+      @ui_footer = Bin in_viewport footer, 1, 1
 
       wait 0.1
 
@@ -107,6 +117,8 @@ class Mursic
   update: (dt) =>
     @seqs\update dt
     @ui\update dt
+    @ui_footer\update dt
+
     while true
       event = @midi\next_event!
       break unless event
@@ -116,5 +128,6 @@ class Mursic
 
   draw: =>
     @ui\draw!
+    @ui_footer\draw!
 
 { :Mursic }
