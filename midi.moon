@@ -1,36 +1,8 @@
 
-enum = (tbl) ->
-  keys = [k for k in pairs tbl]
-  for key in *keys
-    tbl[tbl[key]] = key
-
-  tbl
-
 -- low; 36
 -- hi; 84
 class NoteEvent
   middle_c: 60
-  octave_size: 12
-
-  offsets: enum {
-    C: 0
-    D: 2
-    E: 4
-    F: 5
-    G: 7
-    A: 9
-    B: 11
-  }
-
-  @parse_note: (str) =>
-    letter, sharp, flat, octave = str\match "(%w)(#?)(b?)(%d+)"
-    sharp = sharp != ""
-    flat = flat != ""
-    error "note can not be sharp and flat at same time" if sharp and flat
-    i = assert(@offsets[letter], "invalid note letter") + tonumber(octave) * @octave_size
-    i += 1 if sharp
-    i -= 1 if flat
-    i
 
   new: (event_data) =>
     -- { channel, pitch, velocity, unused, duration }
@@ -40,14 +12,8 @@ class NoteEvent
     @duration = event_data[5]
 
   note_name: =>
-    print "pitch", @pitch
-    octave = math.floor @pitch / @octave_size
-    offset = @pitch - octave * @octave_size
-
-    name = @offsets[offset]
-    name = @offsets[offset - 1] .. "#" unless name
-
-    "#{name}#{octave}", name, octave
+    import note_name from require "notes"
+    note_name @pitch
 
 class NoteOnEvent extends NoteEvent
   name: "noteon"
