@@ -1,11 +1,44 @@
 
+enum = (tbl) ->
+  keys = [k for k in pairs tbl]
+  for key in *keys
+    tbl[tbl[key]] = key
+
+  tbl
+
+-- low; 36
+-- hi; 84
 class NoteEvent
+  middle_c: 60
+  base_octave: 4
+
+  octave_size: 12
+
+  offsets: enum {
+    C: 0
+    D: 2
+    E: 4
+    F: 5
+    G: 7
+    A: 9
+    B: 11
+  }
+
   new: (event_data) =>
     -- { channel, pitch, velocity, unused, duration }
     @channel = event_data[1]
     @pitch = event_data[2]
     @velocity = event_data[3]
     @duration = event_data[5]
+
+  note_name: =>
+    octave = math.floor @pitch / @octave_size
+    offset = @pitch - octave * @octave_size
+
+    name = @offsets[offset]
+    name = @offsets[offset - 1] .. "#" unless name
+
+    "#{name}#{octave}", name, octave
 
 class NoteOnEvent extends NoteEvent
   name: "noteon"

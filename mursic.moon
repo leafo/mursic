@@ -99,7 +99,8 @@ class Mursic
     while true
       event = @midi\next_event!
       break unless event
-      require("moon").p event
+      if event.name == "noteon"
+        print "on", event\note_name!
 
   draw: =>
     g.print "hello world", 10, 10
