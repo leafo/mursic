@@ -2,7 +2,7 @@
 {graphics: g} = love
 
 import VList, HList, Bin, Label from require "lovekit.ui"
-import Staff from require "staff"
+import GrandStaff from require "staff"
 
 class StackedView
   new: (@parent) =>
@@ -88,10 +88,10 @@ class Mursic
     @midi = MidiController!
 
     @seqs\add Sequence ->
-      @staff = Staff "B5"
+      @staff = GrandStaff!
 
       ui = VList {
-        Label "the staff"
+        Label "the grand staff"
         @staff
       }
 
@@ -109,8 +109,9 @@ class Mursic
       @ui = Bin in_viewport ui, 0.5, 0.5
       @ui_footer = Bin in_viewport footer, 1, 1
 
-      @staff\append "A4"
-      @staff\append "B4"
+      @staff\append "D3"
+      @staff\append "A3"
+      @staff\append "B3"
       @staff\append "A5"
       @staff\append "C5"
       @staff\append "D5"

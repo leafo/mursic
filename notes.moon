@@ -6,6 +6,8 @@ enum = (tbl) ->
 
   tbl
 
+MIDDLE_C_PITCH = 60
+
 OCTAVE_SIZE =  12
 OFFSETS = enum {
   C: 0
@@ -63,4 +65,4 @@ if ... == "test"
   for i=0,24
     print i, (note_name i), letter_offset i
 
-{ :parse_note, :note_name, :letter_offset, :OFFSETS, :OCTAVE_SIZE }
+{ :parse_note, :note_name, :letter_offset, :OFFSETS, :OCTAVE_SIZE, :MIDDLE_C_PITCH }
