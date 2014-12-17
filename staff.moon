@@ -1,7 +1,7 @@
 
 {graphics: g} = love
 
-import parse_note from require "notes"
+import parse_note, letter_offset from require "notes"
 
 class NoteBuffer
   time: 0 -- beats elapsed
@@ -30,9 +30,9 @@ class Staff extends Box
 
   note_offset: (n) =>
     pitch = parse_note n
-    dpitch = pitch - @middle_note
+    delta = letter_offset(pitch) - letter_offset(@middle_note)
     mid = (@line_height * 3)
-    math.floor -dpitch * (@line_height / 2) + mid
+    math.floor -delta * (@line_height / 2) + mid
 
   draw_note: (x,y, duration) =>
     border = 3
