@@ -18,7 +18,7 @@ OFFSETS = enum {
 }
 
 -- how many letters away a halfstep is
-LETTER_OFFSETS = enum {
+LETTER_OFFSETS = {
   [0]: 0
   [2]: 1
   [4]: 2
@@ -31,8 +31,8 @@ LETTER_OFFSETS = enum {
 -- how many letters from 0
 letter_offset = (pitch) ->
   offset = 0
-  while pitch > 12
-    offset += 1
+  while pitch >= 12
+    offset += 7
     pitch -= 12
 
   while not LETTER_OFFSETS[pitch]
@@ -59,4 +59,8 @@ note_name = (pitch) ->
 
   "#{name}#{octave}", name, octave
 
-{ :parse_note, :note_name, :OFFSETS, :OCTAVE_SIZE }
+if ... == "test"
+  for i=0,24
+    print i, (note_name i), letter_offset i
+
+{ :parse_note, :note_name, :letter_offset, :OFFSETS, :OCTAVE_SIZE }
