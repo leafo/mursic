@@ -11,8 +11,8 @@ class NoteBuffer
 
 class Staff extends Box
   line_height: 12
-  beat_width: 10
-  note_size: 5
+  beat_width: 20
+  note_size: 8
 
   h: 100
   w: 300
@@ -32,10 +32,12 @@ class Staff extends Box
     pitch = parse_note n
     dpitch = pitch - @middle_note
     mid = (@line_height * 3)
-    math.floor -dpitch * @line_height / 2 + mid
+    math.floor -dpitch * (@line_height / 2) + mid
 
   draw_note: (x,y, duration) =>
+    border = 3
     half = @note_size / 2
+    half_border = border / 2
 
     g.push!
     g.translate x, y
@@ -43,7 +45,8 @@ class Staff extends Box
     g.rotate math.pi / 4
 
     COLOR\push 255, 255,255
-    g.rectangle "fill", -(half + 1), -(half + 1), @note_size + 2, @note_size + 2
+    g.rectangle "fill", -(half + half_border), -(half + half_border),
+      @note_size + border, @note_size + border
     COLOR\pop!
 
     COLOR\push 20, 20, 20
@@ -66,12 +69,15 @@ class Staff extends Box
       g.rectangle "fill", 0, offset_y + 1, @w, 1
       COLOR\pop!
 
-    g.rectangle "line", 0, 0, @w, @h
+    -- g.rectangle "line", 0, 0, @w, @h
 
     if @notes
-      for i, {note, dur} in ipairs @notes
+      i = 1
+
+      for {note, dur} in *@notes
         x = i * @beat_width
         @draw_note x, @note_offset note
+        i += dur
 
     g.pop!
 

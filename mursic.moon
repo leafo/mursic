@@ -124,7 +124,7 @@ class Mursic
       break unless event
       if event.name == "noteon"
         note = event\note_name!
-        @staff.notes\append note, 1
+        @staff.notes\append note, 2
 
   draw: =>
     @ui\draw!
