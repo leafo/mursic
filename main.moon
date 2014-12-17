@@ -12,10 +12,37 @@ load_font = (img, chars)->
   font_image = imgfy img
   g.newImageFont font_image.tex, chars
 
+class PixelViewport extends EffectViewport
+  new: (...) =>
+    super ...
+
+    screen_w, screen_h = g.getWidth!, g.getHeight!
+
+    @canvas = g.newCanvas screen_w / @scale, screen_h / @scale
+    @canvas\setFilter "nearest", "nearest"
+
+  apply: (scale=true) =>
+    g.push!
+    g.translate @offset_x, @offset_y
+
+    g.setCanvas @canvas
+    @canvas\clear 2,2,5, 255
+
+    g.translate -@x, -@y
+
+  pop: =>
+    g.pop!
+    g.setCanvas!
+
+    g.push!
+    g.scale @scale, @scale
+    g.draw @canvas, 0, 0
+    g.pop!
+
 class MainDispatch extends Dispatcher
   new: (...) =>
     super ...
-    @viewport = EffectViewport scale: GAME_CONFIG.scale
+    @viewport = PixelViewport scale: GAME_CONFIG.scale
     @clicking = {}
 
   mouse_pos: =>
