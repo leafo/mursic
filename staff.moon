@@ -88,9 +88,13 @@ class Staff extends Box
     g.rectangle "fill", x, y + 1, w, 1
     COLOR\pop!
 
+  draw_clef: =>
+
   draw: =>
     g.push!
     g.translate @x, @y
+
+    @draw_clef!
 
     for i=1,@staff_lines
       offset_y = i * @line_height
@@ -108,5 +112,25 @@ class Staff extends Box
 
     g.pop!
 
-{ :Staff }
+class TrebleStaff extends Staff
+  new: =>
+    super "B5"
+    @cleff_img = imgfy "images/treble-clef.png"
+
+  draw_clef: =>
+    COLOR\pusha 200
+    @cleff_img\draw -(@cleff_img\width! + 4), 0
+    COLOR\pop!
+
+class BassStaff extends Staff
+  new: =>
+    super "D4"
+    @cleff_img = imgfy "images/bass-clef.png"
+
+  draw_clef: =>
+    COLOR\pusha 200
+    @cleff_img\draw -(@cleff_img\width! + 4), @line_height
+    COLOR\pop!
+
+
 
