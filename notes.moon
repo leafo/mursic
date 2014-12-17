@@ -6,7 +6,6 @@ enum = (tbl) ->
 
   tbl
 
-
 OCTAVE_SIZE =  12
 OFFSETS = enum {
   C: 0
@@ -17,6 +16,29 @@ OFFSETS = enum {
   A: 9
   B: 11
 }
+
+-- how many letters away a halfstep is
+LETTER_OFFSETS = enum {
+  [0]: 0
+  [2]: 1
+  [4]: 2
+  [5]: 3
+  [7]: 4
+  [9]: 5
+  [11]: 6
+}
+
+-- how many letters from 0
+letter_offset = (pitch) ->
+  offset = 0
+  while pitch > 12
+    offset += 1
+    pitch -= 12
+
+  while not LETTER_OFFSETS[pitch]
+    pitch -= 1
+
+  offset + LETTER_OFFSETS[pitch]
 
 parse_note = (str) ->
   letter, sharp, flat, octave = str\match "(%w)(#?)(b?)(%d+)"
