@@ -109,6 +109,19 @@ class Mursic
       @ui = Bin in_viewport ui, 0.5, 0.5
       @ui_footer = Bin in_viewport footer, 1, 1
 
+      @staff\append "A4"
+      @staff\append "B4"
+      @staff\append "A5"
+      @staff\append "C5"
+      @staff\append "D5"
+      @staff\append "G5"
+      @staff\append "C6"
+      @staff\append "G6"
+      @staff\append "A6"
+      @staff\append "C5", 2
+      @staff\append "C6", 2
+      @staff\append "C7", 2
+
       wait 0.1
 
   on_show: =>
@@ -124,7 +137,7 @@ class Mursic
       break unless event
       if event.name == "noteon"
         note = event\note_name!
-        @staff.notes\append note, 2
+        @staff\append note, 2
 
   draw: =>
     @ui\draw!
