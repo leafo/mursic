@@ -34,6 +34,24 @@ class Staff extends Box
     mid = (@line_height * 3)
     math.floor -dpitch * @line_height / 2 + mid
 
+  draw_note: (x,y, duration) =>
+    half = @note_size / 2
+
+    g.push!
+    g.translate x, y
+
+    g.rotate math.pi / 4
+
+    COLOR\push 255, 255,255
+    g.rectangle "fill", -(half + 1), -(half + 1), @note_size + 2, @note_size + 2
+    COLOR\pop!
+
+    COLOR\push 20, 20, 20
+    g.rectangle "fill", -half, -half, @note_size, @note_size
+    COLOR\pop!
+
+    g.pop!
+
   draw: =>
     g.push!
     g.translate @x, @y
@@ -53,10 +71,7 @@ class Staff extends Box
     if @notes
       for i, {note, dur} in ipairs @notes
         x = i * @beat_width
-        g.push!
-        g.translate -@note_size / 2, -@note_size / 2
-        g.rectangle "fill", x, @note_offset(note), @note_size, @note_size
-        g.pop!
+        @draw_note x, @note_offset note
 
     g.pop!
 
