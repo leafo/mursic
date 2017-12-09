@@ -36,6 +36,9 @@ class Staff extends Box
   update: (dt) =>
     true
 
+  shift: =>
+    table.remove @notes, 1
+
   append: (...) =>
     assert(@notes, "no notes buffer on clef")\append ...
 
@@ -163,6 +166,9 @@ class GrandStaff extends VList
       @treble_staff
       @bass_staff
     }
+
+  shift: =>
+    table.remove @notes, 1
 
   append: (...) =>
     @notes\append ...
