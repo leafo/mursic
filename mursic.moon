@@ -20,6 +20,18 @@ class Button extends Label
     if type(callback) == "function"
       @callback = callback
 
+    @seq = Sequence ->
+      while true
+        wait_until -> @hovering
+        wait_for_one(
+          -> wait_until -> not @hovering
+          ->
+            wait_until -> not love.mouse.isDown 1
+            wait_until -> love.mouse.isDown 1
+            if @callback
+              @callback @
+        )
+
   _set_size: (...) =>
     super ...
     @w += @padding * 2
@@ -28,10 +40,7 @@ class Button extends Label
   update: (dt) =>
     x,y = DISPATCHER\mouse_pos!
     @hovering = @touches_pt x,y
-
-    if @hovering and DISPATCHER\just_clicked!
-      if @callback
-        @callback @
+    @seq\update dt
 
     super dt
 

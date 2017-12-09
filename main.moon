@@ -20,25 +20,10 @@ class MainDispatch extends Dispatcher
       crop: true
       scale: GAME_CONFIG.scale
     }
-    @clicking = {}
 
   mouse_pos: =>
     x, y = love.mouse.getPosition!
     @viewport\unproject x, y
-
-  just_clicked: (btn="l") =>
-    @clicking[btn]
-
-  mousereleased: (...) =>
-    x, y, button = ...
-    @clicking[button] = true
-    super ...
-
-  update: (dt) =>
-    super dt
-
-    for k in pairs @clicking
-      @clicking[k] = false
 
 love.load = ->
   fonts = {
