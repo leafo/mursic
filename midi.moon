@@ -55,6 +55,10 @@ class MidiController
   next_event: =>
     if @midi.inputpending! > 0
       event = @midi.input!
+
+      if @connected_output_name
+        @midi.output event
+
       event_id = event[1]
       event_data = event[8]
       switch event_id
