@@ -62,18 +62,25 @@ class Button extends Label
     g.pop!
 
 class ChooseClientDialog extends StackedView
-  new: (@parent) =>
+  new: (opts) =>
+    super assert opts.parent, "missing parent"
+    @on_client = opts.on_client
+    @label = opts.label or "choose midi client"
     @refresh_list!
 
   refresh_list: =>
-    @clients = [{id, name} for id, name in pairs @parent.midi\list_clients!]
-    buttons = VList for tuple in *@clients
-      Button "#{tuple[2]\lower!}     #{tuple[1]}", (btn) ->
-        @parent.midi\connect_from unpack tuple
+    clients = for id, name in pairs @parent.midi\list_clients!
+      {id, name}
+
+    buttons = VList for tuple in *clients
+      Button "#{tuple[2]\lower!}  #{tuple[1]}", (btn) ->
+        if @on_client
+          @.on_client unpack tuple
+
         DISPATCHER\pop!
 
     ui = VList {
-      Label "choose a client to read from"
+      Label @label
       Box 0,0,150, 2
       buttons
       Box 0,0,150, 2
@@ -111,10 +118,20 @@ class Mursic
 
       footer = HList {
         Button "midi in", ->
-          DISPATCHER\push ChooseClientDialog @
+          DISPATCHER\push ChooseClientDialog {
+            parent: @
+            label: "choose midi input device"
+            on_client: (...) ->
+              @midi\connect_from ...
+          }
 
         Button "midi out", ->
-          error "not yet"
+          DISPATCHER\push ChooseClientDialog {
+            parent: @
+            label: "choose midi output device"
+            on_client: (...) ->
+              @midi\connect_to ...
+          }
       }
 
       in_viewport = (...) ->
@@ -124,20 +141,7 @@ class Mursic
       @ui_footer = Bin in_viewport footer, 1, 1
       @ui_header = Bin in_viewport header, 0, 0
 
-      @staff\append "D3"
-      @staff\append "A3"
-      @staff\append "B3"
-      @staff\append "A5"
-      @staff\append "C5"
-      @staff\append "D5"
-      @staff\append "G5"
-      @staff\append "C6"
-      @staff\append "G6"
-      @staff\append "A6"
-      @staff\append "C5", 2
-      @staff\append "C6", 2
-      @staff\append "C7", 2
-
+      @staff\append "C3"
       wait 0.1
 
   on_show: =>

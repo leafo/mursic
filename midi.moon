@@ -24,7 +24,7 @@ class NoteOffEvent extends NoteEvent
 class MidiController
   new: =>
     @midi = require "midialsa"
-    @midi.client "mursic", 1, 0, false
+    @midi.client "mursic", 1, 1, false
 
   list_clients: =>
     { k,v for k,v in pairs @midi.listclients! when k != @midi.id! }
@@ -33,7 +33,9 @@ class MidiController
     @connected_input_name = name
     @midi.connectfrom 0, name
 
-  connect_to: (port) =>
+  connect_to: (port, name) =>
+    @connected_output_name = name
+    @midi.connectto 0, name
 
   create_debug_table: =>
     return if @symbols_by_value
