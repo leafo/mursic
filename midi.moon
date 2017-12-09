@@ -30,6 +30,7 @@ class MidiController
     { k,v for k,v in pairs @midi.listclients! when k != @midi.id! }
 
   connect_from: (port, name) =>
+    @connected_input_name = name
     @midi.connectfrom 0, name
 
   connect_to: (port) =>

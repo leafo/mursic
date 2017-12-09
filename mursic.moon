@@ -104,6 +104,11 @@ class Mursic
         @staff
       }
 
+      header = HList {
+        Label -> "in: #{@midi.connected_input_name or "none"}"\lower!
+        Label -> "out: #{@midi.connected_output_name or "none"}"\lower!
+      }
+
       footer = HList {
         Button "midi in", ->
           DISPATCHER\push ChooseClientDialog @
@@ -117,6 +122,7 @@ class Mursic
 
       @ui = Bin in_viewport ui, 0.5, 0.5
       @ui_footer = Bin in_viewport footer, 1, 1
+      @ui_header = Bin in_viewport header, 0, 0
 
       @staff\append "D3"
       @staff\append "A3"
@@ -141,6 +147,7 @@ class Mursic
     @seqs\update dt
     @ui\update dt
     @ui_footer\update dt
+    @ui_header\update dt
 
     while true
       event = @midi\next_event!
@@ -152,5 +159,6 @@ class Mursic
   draw: =>
     @ui\draw!
     @ui_footer\draw!
+    @ui_header\draw!
 
 { :Mursic }
