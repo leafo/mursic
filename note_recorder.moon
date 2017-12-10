@@ -7,6 +7,27 @@ class NoteRecorder
     @reset!
     @time = 0
 
+    @playback = Sequence ->
+      wait_until -> @playback_time
+      while true
+        wait_until -> next @events
+
+        local last_event
+        -- events should be sorted
+        for event in *@events
+          wait_for_one(
+            -> wait_until -> not @playback_time
+            -> @playback_time >= event[1]
+          )
+          break unless @playback_time
+          last_event = event
+          -- play the event
+          @midi.output event[2]
+
+        if @playback_time
+          @playback_time -= last_event[1]
+          print "reset time to #{@playback_time}"
+
   reset: =>
     @events = {}
     @event_buffer = {}
@@ -27,9 +48,9 @@ class NoteRecorder
         table.remove @event_buffer, 1
 
   record: =>
-    assert not @seq, "already started"
+    assert not @recorder, "already started"
 
-    @seq = Sequence ->
+    @recorder = Sequence ->
       @armed = true -- will start recording soon
 
       if @metronome\is_started!
@@ -45,19 +66,28 @@ class NoteRecorder
       @record_time = 0
       wait_until -> @stopped
       @record_time = nil
-      @seq = nil
+      @recorder = nil
       print "Stopped"
 
   stop: =>
     @stopped = true
 
+    if next @events
+      @playback_time = 0
+
   update: (dt) =>
     @time += dt
+
+    if @playback_time
+      dt += 1
 
     if @record_time
       @record_time += dt
 
-    if @seq
-      @seq\update dt
+    if @recorder
+      @recorder\update dt
+
+    if @playback
+      @playback\update dt
 
 {:NoteRecorder}
