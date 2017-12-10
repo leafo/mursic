@@ -61,6 +61,7 @@ class MidiController
   next_event: =>
     if @midi.inputpending! > 0
       event = @midi.input!
+      require("moon").p event
 
       if @connected_output_name
         @midi.output event
@@ -69,7 +70,10 @@ class MidiController
       event_data = event[8]
       switch event_id
         when @midi.SND_SEQ_EVENT_NOTEON
-          NoteOnEvent event_data
+          if event_data[3] == 0
+            NoteOffEvent event_data
+          else
+            NoteOnEvent event_data
         when @midi.SND_SEQ_EVENT_NOTEOFF
           NoteOffEvent event_data
         else
