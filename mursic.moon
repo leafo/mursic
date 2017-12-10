@@ -4,6 +4,7 @@
 import VList, HList, Bin, Label from require "lovekit.ui"
 import GrandStaff from require "staff"
 import Metronome from require "metronome"
+import NoteRecorder from require "note_recorder"
 
 class StackedView
   new: (@parent) =>
@@ -108,6 +109,11 @@ class Mursic
       bpm: 90
     }
 
+    @note_recorder = NoteRecorder {
+      midi: @midi
+      metronome: @metronome
+    }
+
     @seqs\add Sequence ->
       @staff = GrandStaff!
 
@@ -123,7 +129,21 @@ class Mursic
 
       footer = HList {
         Label ->
-          "beat: #{@metronome\format_beat!}"
+          "#{@note_recorder\status!} beat: #{@metronome\format_beat!}"
+
+        Button(
+          ->
+            if @note_recorder\is_recording!
+              "stop"
+            else
+              "record"
+
+          ->
+            if @note_recorder\is_recording!
+              @note_recorder\stop!
+            else
+              @note_recorder\record!
+        )
 
         Button "metronome", ->
           if @metronome\is_started!
@@ -167,10 +187,13 @@ class Mursic
     @ui_footer\update dt
     @ui_header\update dt
     @metronome\update dt
+    @note_recorder\update dt
 
     while true
-      event = @midi\next_event!
+      event, raw_event = @midi\next_event!
       break unless event
+      @note_recorder\on_event raw_event
+
       if event.name == "noteon"
         note = event\note_name!
         @staff\append note, 1
