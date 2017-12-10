@@ -52,6 +52,12 @@ class MidiController
     while @midi.inputpending! > 0
       @midi.input!
 
+  note_on: (channel, pitch, velocity) =>
+    @midi.output @midi.noteonevent channel, pitch, velocity
+
+  note_off: (channel, pitch) =>
+    @midi.output @midi.noteoffevent channel, pitch, 0
+
   next_event: =>
     if @midi.inputpending! > 0
       event = @midi.input!

@@ -3,6 +3,7 @@
 
 import VList, HList, Bin, Label from require "lovekit.ui"
 import GrandStaff from require "staff"
+import Metronome from require "metronome"
 
 class StackedView
   new: (@parent) =>
@@ -103,6 +104,10 @@ class Mursic
     import MidiController from require "midi"
     @midi = MidiController!
 
+    @metronome = Metronome @midi, {
+      bpm: 90
+    }
+
     @seqs\add Sequence ->
       @staff = GrandStaff!
 
@@ -117,6 +122,15 @@ class Mursic
       }
 
       footer = HList {
+        Label ->
+          "beat: #{@metronome\format_beat!}"
+
+        Button "metronome", ->
+          if @metronome\is_started!
+            @metronome\stop!
+          else
+            @metronome\start!
+
         Button "midi in", ->
           DISPATCHER\push ChooseClientDialog {
             parent: @
@@ -152,6 +166,7 @@ class Mursic
     @ui\update dt
     @ui_footer\update dt
     @ui_header\update dt
+    @metronome\update dt
 
     while true
       event = @midi\next_event!
